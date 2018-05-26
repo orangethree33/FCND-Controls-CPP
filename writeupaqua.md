@@ -52,6 +52,18 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   * The controller should account for the non-linear transformation from local accelerations to body rates.
   * Note that the drone's mass should be accounted for when calculating the target angles.
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   ## Altitude Controller
   
   ### illustrations
@@ -112,18 +124,27 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 	accelCmd.y = CONSTRAIN(accelCmd.y, -maxAccelXY, maxAccelXY);
 	accelCmd.z = 0.F;
 	
-	return accelCmd;
-	`
+	return accelCmd;`
+	
 
   
   ## YawController
   
   ### illustrations
   * The controller can be a linear/proportional heading controller to yaw rate commands (non-linear transformation not required).
-  
-  
-  
- ## Flight Evalution 
+  ---
+   * Calculate a desired yaw rate to control yaw to yawCmd
+   * use fmodf to unwrap the radian angle measure floot foo to range [0.b]
+   * use the yaw constant to measure the yaw rate
+   
+   ` float error=yawCmd-yaw;
+     error=fmodf(error,2*F_PI);
+     yawRateCmd=KpYaw*error;
+     return yawRateCmd;`
+     
+   
+ 
+## Flight Evalution 
  * Ensure that in each scenario the drone looks stable and performs the required task. Specifically check that the student's controller is able to handle the non-linearities of scenario 4 (all three drones in the scenario should be able to perform the required task with the same control gains used).
  
  

@@ -55,6 +55,20 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   
   
   
+       `float c = collThrustCmd / mass;
+	V3F b = V3F(R(0, 2), R(1, 2), 0.f);
+	V3F b_c = V3F(-accelCmd.x / c, -accelCmd.y / c, 0.f);
+	b_c.constrain(-maxTiltAngle, maxTiltAngle);
+
+	V3F b_error = b_c - b;
+	V3F b_c_dot = kpBank * b_error;
+
+	pqrCmd.x = (R(1, 0) * b_c_dot.x - R(0, 0) * b_c_dot.y) / R(2, 2);
+	pqrCmd.y = (R(1, 1) * b_c_dot.x - R(0, 1) * b_c_dot.y) / R(2, 2);
+	pqrCmd.z = 0;`
+  
+  
+  
   
   
   
@@ -97,10 +111,11 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   
   ### illustrations
   
-  * The controller should use the local NE position and velocity to generate a commanded local acceleration.
+   * The controller should use the local NE position and velocity to generate a commanded local acceleration.
   
-  * Use PD Control and FF and constrain desired acceleration and velocity
-  `// make sure we don't have any incoming z-component
+   * Use PD Control and FF and constrain desired acceleration and velocity
+     
+       `// make sure we don't have any incoming z-component
 	accelCmdFF.z = 0;
 	velCmd.z = 0;
 	posCmd.z = pos.z;

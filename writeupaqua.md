@@ -27,7 +27,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 
 * caculate the Ft,Fp,Fq,Fr
 * caculate the F1,F2,F3,F4
-* Code
+* Code & Helfful Equation
 
 `float Ft = collThrustCmd;
 	float Fp = momentCmd.x / l;
@@ -43,14 +43,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 	cmd.desiredThrustsN[1] = CONSTRAIN(F2, minMotorThrust, maxMotorThrust); // front right
 	cThe controller should use both the down position and the down velocity to command thrust. Ensure that the output value is indeed thrust (the drone's mass needs to be accounted for) and that the thrust includes the non-linear effects from non-zero roll/pitch angles
 	
-  ##BodyRate Controller	
-	
-	
-  ### illustrations
-  
-  The controller we designed  that should be a proportional controller on the body rates 
-  The controller should be take into account the moments of inertia of the quad as calculating the command the moments
-  
+
   
   ## RollPitch Controller
   
@@ -68,6 +61,25 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   * Ensure that the output value is indeed thrust (the drone's mass needs to be accounted for) and that the thrust includes the non-         linear effects from non-zero roll/pitch angles
   
   
+   ## BodyRate Controller
+
+  ### illustrations
+  
+  The controller we designed  that should be a proportional controller on the body rates 
+  The controller should be take into account the moments of inertia of the quad as calculating the command the moments
+  
+  ### Helpful Equations
+  * V3F structure is the way to record the IXX,IYY,IZZ
+  * KpPQR is proportional gains on angular velocity
+  * M=I*Phi_dot_dot
+  
+  ## Code
+  
+  `V3F momentCmd;
+   memontCmd=V3F(Ixx,Iyy,Izz)* KpPQR*(pqrCmd-pqr)`
+  
+  
+  
   
   ## LateralPositon Controller
   
@@ -75,11 +87,40 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   
   * The controller should use the local NE position and velocity to generate a commanded local acceleration.
   
+  * Use PD Control and FF and constrain desired acceleration and velocity
+  `// make sure we don't have any incoming z-component
+	accelCmdFF.z = 0;
+	velCmd.z = 0;
+	posCmd.z = pos.z;
+
+	// we initialize the returned desired acceleration to the feed-forward value.
+	// Make sure to _add_, not simply replace, the result of your controller
+	// to this variable
+	V3F accelCmd = accelCmdFF;
+
+	////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
+
+	V3F error = posCmd - pos;
+	velCmd += kpPosXY * error;
+        velCmd.x = CONSTRAIN(velCmd.x, -maxSpeedXY, maxSpeedXY);
+	velCmd.y = CONSTRAIN(velCmd.y, -maxSpeedXY, maxSpeedXY);
+
+	V3F error_dot = velCmd - vel;
+	accelCmd += kpVelXY * error_dot;
+
+	accelCmd.x = CONSTRAIN(accelCmd.x, -maxAccelXY, maxAccelXY);
+	accelCmd.y = CONSTRAIN(accelCmd.y, -maxAccelXY, maxAccelXY);
+	accelCmd.z = 0.F;
+	
+	return accelCmd;
+	`
+
   
   ## YawController
   
   ### illustrations
   * The controller can be a linear/proportional heading controller to yaw rate commands (non-linear transformation not required).
+  
   
   
  ## Flight Evalution 

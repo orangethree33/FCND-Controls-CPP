@@ -36,8 +36,8 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 
 	float F1 = (Ft + Fp + Fq - Fr) / 4;
 	float F2 = F1 - (Fp - Fr) / 2;
-  float F3 = Ft - F1 - F2 - F4;
-  float F4 = (Ft - Fp) / 2 - F2;
+        float F3 = Ft - F1 - F2 - F4;
+        float F4 = (Ft - Fp) / 2 - F2;
 
 	cmd.desiredThrustsN[0] = CONSTRAIN(F1, minMotorThrust, maxMotorThrust); // front left
 	cmd.desiredThrustsN[1] = CONSTRAIN(F2, minMotorThrust, maxMotorThrust); // front right

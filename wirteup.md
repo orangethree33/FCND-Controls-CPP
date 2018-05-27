@@ -52,7 +52,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   * The controller should account for the non-linear transformation from local accelerations to body rates.
   * Note that the drone's mass should be accounted for when calculating the target angles.
   
-   ``if ( collThrustCmd > 0 ) { 
+   `if ( collThrustCmd > 0 ) { 
     float c = - collThrustCmd / mass; 
     
     float b_x_cmd = CONSTRAIN(accelCmd.x / c, -maxTiltAngle, maxTiltAngle);
@@ -92,6 +92,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 
 
 ### Code
+
  float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd,     float dt) 
  Mat3x3F R = attitude.RotationMatrix_IwrtB();  
  float thrust = 0; 

@@ -94,7 +94,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 ### Code
 
 
-``float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd,     float dt) 
+`float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd,     float dt) 
  Mat3x3F R = attitude.RotationMatrix_IwrtB(); 
  
  float thrust = 0;
@@ -149,7 +149,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
    * Use PD Control and FF and constrain desired acceleration and velocity
    
      
-   ` `V3F kpPos; 
+   ``V3F kpPos; 
       
       kpPos.x = kpPosXY; 
       

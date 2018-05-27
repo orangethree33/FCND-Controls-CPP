@@ -30,9 +30,9 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 * Code & Helfful Equation
 
 `float Ft = collThrustCmd;
-	float Fp = momentCmd.x / l;
-	float Fq = momentCmd.y / l;
-	float Fr = momentCmd.z / kappa;
+`float Fp = momentCmd.x / l;
+	`float Fq = momentCmd.y / l;
+	`float Fr = momentCmd.z / kappa;
 
 	float F1 = (Ft + Fp + Fq - Fr) / 4;
 	float F2 = F1 - (Fp - Fr) / 2;
@@ -52,7 +52,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   * The controller should account for the non-linear transformation from local accelerations to body rates.
   * Note that the drone's mass should be accounted for when calculating the target angles.
   
-    if ( collThrustCmd > 0 ) { 
+   ` if ( collThrustCmd > 0 ) { 
     float c = - collThrustCmd / mass; 
     
     float b_x_cmd = CONSTRAIN(accelCmd.x / c, -maxTiltAngle, maxTiltAngle);

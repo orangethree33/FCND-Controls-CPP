@@ -52,10 +52,10 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   * The controller should account for the non-linear transformation from local accelerations to body rates.
   * Note that the drone's mass should be accounted for when calculating the target angles.
   
-  `if ( collThrustCmd > 0 ) { 
+  ` if ( collThrustCmd > 0 ) { 
     float c = - collThrustCmd / mass; 
     float b_x_cmd = CONSTRAIN(accelCmd.x / c, -maxTiltAngle, maxTiltAngle);
-    float b_x_err = b_x_cmd - R(0,2); float b_x_p_tm = kpBank * b_x_err;
+    float b_x_err = b_x_cmd - R(0,2); float b_x_p_tm = kpBank * b_x_err;`
 
     float b_y_cmd = CONSTRAIN(accelCmd.y / c, -maxTiltAngle, maxTiltAngle);
     float b_y_err = b_y_cmd - R(1,2);
@@ -79,26 +79,26 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
  
   * The controller should use both the down position and the down velocity to command thrust. 
   * Ensure that the output value is indeed thrust (the drone's mass needs to be accounted for) and that the thrust includes the non-         linear effects from non-zero roll/pitch angles
-  `float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd, float dt) 
+  
 
 
 ### Code
+`float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd,     float dt) 
+ Mat3x3F R = attitude.RotationMatrix_IwrtB(); float thrust = 0;
 
-`Mat3x3F R = attitude.RotationMatrix_IwrtB(); float thrust = 0;
+ float z_err = posZCmd - posZ; float p_tm = kpPosZ * z_err;
 
-float z_err = posZCmd - posZ; float p_tm = kpPosZ * z_err;
+ float z_dot_err = velZCmd - velZ; ;
 
-float z_dot_err = velZCmd - velZ; ;
+ float d_tm = kpVelZ z_dot_err + velZ; float i_tm = KiPosZ integratedAltitudeError; float b_z = R(2,2);
 
-float d_tm = kpVelZ z_dot_err + velZ; float i_tm = KiPosZ integratedAltitudeError; float b_z = R(2,2);
+ float u_1_bar = p_tm + d_tm + i_tm + accelZCmd;
 
-float u_1_bar = p_tm + d_tm + i_tm + accelZCmd;
+ float acc = ( u_1_bar - CONSintegratedAltitudeError += z_err * dtT_GRAVITY ) / b_z;
 
-float acc = ( u_1_bar - CONSintegratedAltitudeError += z_err * dtT_GRAVITY ) / b_z;
+ thrust = - mass * CONSTRAIN(acc, - maxAscentRate / dt, maxAscentRate / dt);
 
-thrust = - mass * CONSTRAIN(acc, - maxAscentRate / dt, maxAscentRate / dt);
-
-return thrust;` 
+ return thrust;` 
 
   
    ## BodyRate Controller
@@ -128,11 +128,10 @@ return thrust;`
    * The controller should use the local NE position and velocity to generate a commanded local acceleration.
   
    * Use PD Control and FF and constrain desired acceleration and velocity
+   
      
-     `V3F kpPos; kpPos.x = kpPosXY; kpPos.y = kpPosXY; kpPos.z = 0.f;
-
+      V3F kpPos; kpPos.x = kpPosXY; kpPos.y = kpPosXY; kpPos.z = 0.f;
       V3F kpVel; kpVel.x = kpVelXY; kpVel.y = kpVelXY; kpVel.z = 0.f;
-
       V3F capVelCmd; 
       if ( velCmd.mag() > maxSpeedXY ) 
      { 
@@ -143,8 +142,7 @@ return thrust;`
      }
 
      accelCmd = kpPos ( posCmd - pos ) + kpVel ( capVelCmd - vel ) + accelCmd;
-
-    if ( accelCmd.mag() > maxAccelXY ) 
+     if ( accelCmd.mag() > maxAccelXY ) 
     { 
     accelCmd = accelCmd.norm() * maxAccelXY;
      }`

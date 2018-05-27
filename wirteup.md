@@ -52,7 +52,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   * The controller should account for the non-linear transformation from local accelerations to body rates.
   * Note that the drone's mass should be accounted for when calculating the target angles.
   
-   ` if ( collThrustCmd > 0 ) { 
+   ``if ( collThrustCmd > 0 ) { 
     float c = - collThrustCmd / mass; 
     
     float b_x_cmd = CONSTRAIN(accelCmd.x / c, -maxTiltAngle, maxTiltAngle);
@@ -69,13 +69,13 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
     `pqrCmd.x = (R(1,0) * b_x_p_tm - R(0,0) * b_y_p_tm) / R(2,2);
     
     pqrCmd.y = (R(1,1) * b_x_p_tm - R(0,1) * b_y_p_tm) / R(2,2);
-  } 
-  else {
+    } 
+    else {
   
-  pqrCmd.x = 0.0; pqrCmd.y = 0.0; 
-  }
+    pqrCmd.x = 0.0; pqrCmd.y = 0.0; 
+    }
   
-  pqrCmd.z = 0;`
+    pqrCmd.z = 0;``
   
   
   
@@ -94,7 +94,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 ### Code
 
 
-`float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd,     float dt) 
+``float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd,     float dt) 
  Mat3x3F R = attitude.RotationMatrix_IwrtB(); 
  
  float thrust = 0;
@@ -117,7 +117,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
  
  thrust = - mass * CONSTRAIN(acc, - maxAscentRate / dt, maxAscentRate / dt);
  
- return thrust;` 
+ return thrust;``
 
   
   ## BodyRate Controller
@@ -149,7 +149,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
    * Use PD Control and FF and constrain desired acceleration and velocity
    
      
-      `V3F kpPos; 
+   ` `V3F kpPos; 
       
       kpPos.x = kpPosXY; 
       
@@ -172,7 +172,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
      if ( accelCmd.mag() > maxAccelXY ) 
     { 
     accelCmd = accelCmd.norm() * maxAccelXY;
-     }`
+     }``
 
 	
 

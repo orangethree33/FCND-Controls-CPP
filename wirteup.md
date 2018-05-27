@@ -52,16 +52,15 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
   * The controller should account for the non-linear transformation from local accelerations to body rates.
   * Note that the drone's mass should be accounted for when calculating the target angles.
   
-  ` if ( collThrustCmd > 0 ) { 
+    if ( collThrustCmd > 0 ) { 
     float c = - collThrustCmd / mass; 
     float b_x_cmd = CONSTRAIN(accelCmd.x / c, -maxTiltAngle, maxTiltAngle);
-    float b_x_err = b_x_cmd - R(0,2); float b_x_p_tm = kpBank * b_x_err;`
-
+    float b_x_err = b_x_cmd - R(0,2); float b_x_p_tm = kpBank * b_x_err;
     float b_y_cmd = CONSTRAIN(accelCmd.y / c, -maxTiltAngle, maxTiltAngle);
     float b_y_err = b_y_cmd - R(1,2);
-    float b_y_p_tm = kpBank * b_y_err;
+    float b_y_p_tm = kpBank * b_y_err;`
 
-    pqrCmd.x = (R(1,0) * b_x_p_tm - R(0,0) * b_y_p_tm) / R(2,2);
+    `pqrCmd.x = (R(1,0) * b_x_p_tm - R(0,0) * b_y_p_tm) / R(2,2);
     pqrCmd.y = (R(1,1) * b_x_p_tm - R(0,1) * b_y_p_tm) / R(2,2);
   } 
   else {
@@ -83,21 +82,20 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 
 
 ### Code
+
+
 `float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd,     float dt) 
- Mat3x3F R = attitude.RotationMatrix_IwrtB(); float thrust = 0;
-
- float z_err = posZCmd - posZ; float p_tm = kpPosZ * z_err;
-
+ Mat3x3F R = attitude.RotationMatrix_IwrtB(); 
+ float thrust = 0;
+ float z_err = posZCmd - posZ; 
+ float p_tm = kpPosZ * z_err;
  float z_dot_err = velZCmd - velZ; ;
-
- float d_tm = kpVelZ z_dot_err + velZ; float i_tm = KiPosZ integratedAltitudeError; float b_z = R(2,2);
-
+ float d_tm = kpVelZ z_dot_err + velZ; 
+ float i_tm = KiPosZ integratedAltitudeError;
+ float b_z = R(2,2);
  float u_1_bar = p_tm + d_tm + i_tm + accelZCmd;
-
  float acc = ( u_1_bar - CONSintegratedAltitudeError += z_err * dtT_GRAVITY ) / b_z;
-
  thrust = - mass * CONSTRAIN(acc, - maxAscentRate / dt, maxAscentRate / dt);
-
  return thrust;` 
 
   
@@ -130,7 +128,7 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
    * Use PD Control and FF and constrain desired acceleration and velocity
    
      
-      V3F kpPos; kpPos.x = kpPosXY; kpPos.y = kpPosXY; kpPos.z = 0.f;
+      `V3F kpPos; kpPos.x = kpPosXY; kpPos.y = kpPosXY; kpPos.z = 0.f;
       V3F kpVel; kpVel.x = kpVelXY; kpVel.y = kpVelXY; kpVel.z = 0.f;
       V3F capVelCmd; 
       if ( velCmd.mag() > maxSpeedXY ) 

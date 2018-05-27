@@ -92,32 +92,19 @@ Convert a desired 3-axis moment and collective thrust command to individual moto
 
 
 ### Code
-
-
 `float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd,     float dt) 
  Mat3x3F R = attitude.RotationMatrix_IwrtB(); 
- 
  float thrust = 0;
- 
  float z_err = posZCmd - posZ; 
- 
  float p_tm = kpPosZ * z_err;
- 
  float z_dot_err = velZCmd - velZ; ;
- 
  float d_tm = kpVelZ z_dot_err + velZ; 
- 
  float i_tm = KiPosZ integratedAltitudeError;
- 
  float b_z = R(2,2);
- 
  float u_1_bar = p_tm + d_tm + i_tm + accelZCmd;
- 
  float acc = ( u_1_bar - CONSintegratedAltitudeError += z_err * dtT_GRAVITY ) / b_z;
- 
  thrust = - mass * CONSTRAIN(acc, - maxAscentRate / dt, maxAscentRate / dt);
- 
- return thrust;``
+ return thrust;`
 
   
   ## BodyRate Controller

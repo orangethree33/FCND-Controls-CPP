@@ -160,6 +160,17 @@ V3F QuadControl::RollPitchControl(V3F accelCmd, Quaternion<float> attitude, floa
    else { pqrCmd.x = 0.0; pqrCmd.y = 0.0; }
 
     pqrCmd.z = 0;
+  
+    float target_R13 = -CONSTRAIN(accelCmd[0] / (collThrustCmd / mass), -maxTiltAngle, maxTiltAngle);
+    float target_R23 = -CONSTRAIN(accelCmd[1] / (collThrustCmd / mass), -maxTiltAngle, maxTiltAngle);
+
+  if (collThrustCmd < 0)
+  {
+    target_R13 = 0;
+    target_R23 = 0;
+  }
+  pqrCmd.x = (1 / R(2, 2))*(-R(1, 0) * kpBank*(R(0, 2) - target_R13) + R(0, 0) * kpBank*(R(1, 2) - target_R23));
+  pqrCmd.y = (1 / R(2, 2))*(-R(1, 1) * kpBank*(R(0, 2) - target_R13) + R(0, 1) * kpBank*(R(1, 2) - target_R23));
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
@@ -194,17 +205,26 @@ float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, flo
 
    float z_dot_err = velZCmd - velZ; 
 
-   float d_tm = kpVelZ z_dot_err + velZ;
-   float i_tm = KiPosZ integratedAltitudeError; 
+   float d_tm = kpVelZ*z_dot_err + velZ;
+   float i_tm = KiPosZ*integratedAltitudeError; 
    float b_z = R(2,2);
+   float z_err = posZCmd - posZ; 
+   float p_tm = kpPosZ * z_err;
+   
+  
+   
 
    float u_1_bar = p_tm + d_tm + i_tm + accelZCmd;
 
-   float acc = ( u_1_bar - CONSintegratedAltitudeError += z_err * dtT_GRAVITY ) / b_z;
+   velZCmd += kpPosZ * (posZCmd - posZ);
 
-   thrust = - mass * CONSTRAIN(acc, - maxAscentRate / dt, maxAscentRate / dt); 
+   integratedAltitudeError += (posZCmd - posZ) * dt;
 
-  
+   velZCmd = CONSTRAIN(velZCmd, -maxAscentRate, maxDescentRate);
+
+   float desAccel = kpVelZ * (velZCmd - velZ) + KiPosZ * integratedAltitudeError + accelZCmd - 9.81f;
+
+    thrust = -(desAccel / R(2, 2) * mass);
 
 
 
@@ -252,7 +272,7 @@ V3F QuadControl::LateralPositionControl(V3F posCmd, V3F velCmd, V3F pos, V3F vel
          capVelCmd = velCmd;
        }
 
-     accelCmd = kpPos ( posCmd - pos ) + kpVel ( capVelCmd - vel ) + accelCmd;
+     accelCmd = kpPos*( posCmd - pos ) + kpVel*( capVelCmd - vel ) + accelCmd;
 
     if ( accelCmd.mag() > maxAccelXY ) 
     {
